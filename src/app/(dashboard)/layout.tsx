@@ -24,8 +24,6 @@ export default async function DashboardLayout({
     .select('company_name, business_number')
     .eq('id', user.id)
     .single()
-    .then(res => res)
-    .catch(() => ({ data: null }))
 
   return (
     <div className="min-h-screen bg-gray-50">
