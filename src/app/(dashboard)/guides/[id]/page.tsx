@@ -87,7 +87,6 @@ export default function GuideDetailPage() {
             setPhotoPreview(data.photo_url)
           }
         } catch (error) {
-          console.error('Error creating signed URL:', error)
           setPhotoPreview(data.photo_url)
         }
       }
@@ -197,7 +196,6 @@ export default function GuideDetailPage() {
       const fileExt = file.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
 
-      console.log('Uploading file:', fileName, 'to bucket: guide-photos')
 
       const { data, error: uploadError } = await supabase.storage
         .from('guide-photos')
@@ -207,17 +205,14 @@ export default function GuideDetailPage() {
         })
 
       if (uploadError) {
-        console.error('Upload error:', uploadError)
         setError(`업로드 실패: ${uploadError.message}`)
         return null
       }
 
-      console.log('Upload success:', data)
 
       // Private bucket이므로 파일 경로만 반환 (signed URL은 조회 시 생성)
       return fileName
     } catch (error) {
-      console.error('Error uploading photo:', error)
       setError(`업로드 중 오류: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
       return null
     }

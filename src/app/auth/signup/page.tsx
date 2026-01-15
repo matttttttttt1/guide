@@ -34,7 +34,6 @@ export default function SignupPage() {
           setEmailExists(result.exists)
         }
       } catch (err) {
-        console.error('이메일 체크 오류:', err)
       } finally {
         setEmailChecking(false)
       }

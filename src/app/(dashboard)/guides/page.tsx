@@ -54,7 +54,6 @@ export default async function GuidesPage() {
             photo_url: data?.signedUrl || guide.photo_url
           }
         } catch (error) {
-          console.error('Error creating signed URL:', error)
           return guide
         }
       }

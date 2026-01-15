@@ -108,7 +108,6 @@ export async function resetPassword(formData: FormData) {
   })
 
   if (error) {
-    console.error('비밀번호 재설정 오류:', error)
     return { error: `비밀번호 변경 실패: ${error.message}` }
   }
 
@@ -124,7 +123,6 @@ export async function checkEmailExists(email: string) {
   const { data, error } = await supabase.rpc('check_email_exists', { email_param: email })
 
   if (error) {
-    console.error('이메일 중복 체크 오류:', error)
     // 함수가 없으면 중복 체크 건너뛰기
     return { exists: false, error: 'Database function not found' }
   }

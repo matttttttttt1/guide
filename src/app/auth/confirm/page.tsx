@@ -42,20 +42,17 @@ export default function ConfirmPage() {
         const type = hashParams.get('type')
 
         if (accessToken && type === 'signup') {
-          console.log('Implicit flow - setting session from hash tokens')
           const { error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken || ''
           })
 
           if (sessionError) {
-            console.error('Session error:', sessionError)
             setStatus('error')
             setMessage('이메일 인증에 실패했습니다.')
             return
           }
 
-          console.log('Email confirmed successfully via implicit flow')
           setStatus('success')
           setMessage('이메일 인증이 완료되었습니다!')
 
@@ -70,13 +67,9 @@ export default function ConfirmPage() {
         }
 
         // 토큰이 없으면 에러
-        console.error('No tokens found in URL')
-        console.log('Hash params:', hashParams.toString())
-        console.log('Query params:', queryParams.toString())
         setStatus('error')
         setMessage('유효하지 않은 인증 링크입니다.')
       } catch (error) {
-        console.error('이메일 인증 오류:', error)
         setStatus('error')
         setMessage('이메일 인증 처리 중 오류가 발생했습니다.')
       }
