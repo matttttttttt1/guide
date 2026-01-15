@@ -43,12 +43,15 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  // 환경변수 확인 로그
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://guide-management.vercel.app'
-  const redirectUrl = `${siteUrl}/auth/confirm`
+  // Production URL 직접 사용 (환경변수 문제 해결)
+  const isProduction = process.env.NODE_ENV === 'production'
+  const redirectUrl = isProduction
+    ? 'https://guide-management.vercel.app/auth/confirm'
+    : 'http://localhost:3000/auth/confirm'
+
   console.log('=== Signup Debug ===')
-  console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
-  console.log('siteUrl:', siteUrl)
+  console.log('NODE_ENV:', process.env.NODE_ENV)
+  console.log('isProduction:', isProduction)
   console.log('redirectUrl:', redirectUrl)
 
   const { error } = await supabase.auth.signUp({
