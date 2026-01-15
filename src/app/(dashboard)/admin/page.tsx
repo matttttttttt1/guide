@@ -5,6 +5,7 @@ import { checkAdminAccess } from '@/lib/admin'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Building2, Users } from 'lucide-react'
+import { ExcelExportButton } from '@/components/admin/excel-export-button'
 
 export default async function AdminDashboardPage() {
   // 관리자 권한 체크
@@ -35,18 +36,54 @@ export default async function AdminDashboardPage() {
     })
   ) : []
 
+  // 전체 가이드 목록 조회 (엑셀 다운로드용)
+  const { data: allGuides } = await supabase
+    .from('guides')
+    .select(`
+      id,
+      name,
+      phone,
+      email,
+      qualification_number,
+      user_id,
+      profiles!guides_user_id_fkey (
+        company_name,
+        business_number
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  // 가이드 데이터 포맷팅 (엑셀 export용)
+  const guidesForExport = allGuides?.map(guide => ({
+    id: guide.id,
+    name: guide.name,
+    phone: guide.phone,
+    email: guide.email,
+    qualification_number: guide.qualification_number,
+    company_name: (guide.profiles as any)?.company_name || '',
+    business_number: (guide.profiles as any)?.business_number || ''
+  })) || []
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold">관리자 대시보드</h1>
-          <Badge variant="default" className="bg-red-600">
-            관리자
-          </Badge>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold">관리자 대시보드</h1>
+              <Badge variant="default" className="bg-red-600">
+                관리자
+              </Badge>
+            </div>
+            <p className="mt-2 text-gray-600">
+              등록된 모든 랜드사와 가이드를 관리합니다
+            </p>
+          </div>
+          <ExcelExportButton
+            companies={companiesWithGuideCount}
+            guides={guidesForExport}
+          />
         </div>
-        <p className="mt-2 text-gray-600">
-          등록된 모든 랜드사와 가이드를 관리합니다
-        </p>
       </div>
 
       {/* 통계 요약 */}
