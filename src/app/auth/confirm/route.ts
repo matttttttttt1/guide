@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -8,7 +9,7 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/profile/complete'
 
   if (token_hash && type) {
-    const response = NextResponse.redirect(new URL(next, request.url))
+    const cookieStore = await cookies()
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,11 +17,11 @@ export async function GET(request: NextRequest) {
       {
         cookies: {
           getAll() {
-            return request.cookies.getAll()
+            return cookieStore.getAll()
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
+              cookieStore.set(name, value, options)
             )
           },
         },
@@ -33,8 +34,8 @@ export async function GET(request: NextRequest) {
     })
 
     if (!error) {
-      // 성공 - 세션 쿠키가 설정된 response 반환
-      return response
+      // 성공 - 쿠키가 설정된 상태로 리다이렉트
+      return NextResponse.redirect(new URL(next, request.url))
     }
   }
 
