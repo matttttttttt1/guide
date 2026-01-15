@@ -43,10 +43,18 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   }
 
+  // 환경변수 확인 로그
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://guide-management.vercel.app'
+  const redirectUrl = `${siteUrl}/auth/confirm`
+  console.log('=== Signup Debug ===')
+  console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+  console.log('siteUrl:', siteUrl)
+  console.log('redirectUrl:', redirectUrl)
+
   const { error } = await supabase.auth.signUp({
     ...data,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/confirm`,
+      emailRedirectTo: redirectUrl,
     }
   })
 
