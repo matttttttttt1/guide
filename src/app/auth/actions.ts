@@ -76,7 +76,8 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/auth/verify-email')
+  // 이메일 인증 비활성화 시 바로 프로필 완성 페이지로 이동
+  redirect('/profile/complete')
 }
 
 export async function logout() {
