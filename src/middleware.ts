@@ -27,12 +27,16 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // /auth/confirm은 route handler가 직접 처리하도록 skip
+  if (request.nextUrl.pathname === '/auth/confirm') {
+    return supabaseResponse
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
-  const isConfirmPage = request.nextUrl.pathname.startsWith('/auth/confirm')
   const isProfileCompletePage = request.nextUrl.pathname.startsWith('/profile/complete')
   const isProtectedPage =
     request.nextUrl.pathname.startsWith('/guides') ||
@@ -43,8 +47,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  // 인증된 사용자가 auth 페이지 접근 시도 (confirm 페이지는 예외)
-  if (user && isAuthPage && !isConfirmPage) {
+  // 인증된 사용자가 auth 페이지 접근 시도
+  if (user && isAuthPage) {
     return NextResponse.redirect(new URL('/guides', request.url))
   }
 
