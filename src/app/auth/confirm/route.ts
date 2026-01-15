@@ -4,27 +4,11 @@ import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const token_hash = searchParams.get('token_hash')
-  const type = searchParams.get('type')
   const next = searchParams.get('next') ?? '/profile/complete'
 
-  // 디버깅: 받은 파라미터 확인
-  console.log('=== Email Confirmation Debug ===')
+  console.log('=== Email Confirmation (PKCE Flow) ===')
   console.log('Full URL:', request.url)
-  console.log('token_hash:', token_hash)
-  console.log('type:', type)
-  console.log('next:', next)
-  console.log('All params:', Object.fromEntries(searchParams))
-
-  if (!token_hash) {
-    console.error('ERROR: token_hash is missing!')
-    return NextResponse.redirect(new URL('/auth/login?error=토큰이 없습니다', request.url))
-  }
-
-  if (!type) {
-    console.error('ERROR: type is missing!')
-    return NextResponse.redirect(new URL('/auth/login?error=타입이 없습니다', request.url))
-  }
+  console.log('Target redirect:', next)
 
   const cookieStore = await cookies()
 
@@ -49,33 +33,27 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  console.log('Calling verifyOtp with:', { type, token_hash: token_hash.substring(0, 20) + '...' })
+  // PKCE flow에서는 Supabase가 이미 세션을 설정했으므로
+  // 현재 사용자를 확인하기만 하면 됨
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  const { data, error } = await supabase.auth.verifyOtp({
-    type: type as any,
-    token_hash,
+  console.log('Current user check:', {
+    authenticated: !!user,
+    userId: user?.id,
+    email: user?.email,
+    error: error?.message
   })
 
-  console.log('verifyOtp result:', {
-    success: !!data?.user,
-    userId: data?.user?.id,
-    error: error?.message,
-    errorCode: error?.code
-  })
-
-  if (!error && data?.user) {
-    // 성공 - 쿠키가 설정된 상태로 리다이렉트
-    console.log('✅ Success! User authenticated:', data.user.email)
+  if (user) {
+    // 성공 - 이미 인증된 사용자
+    console.log('✅ User authenticated via PKCE flow:', user.email)
     console.log('Redirecting to:', next)
     return NextResponse.redirect(new URL(next, request.url))
   }
 
-  // 에러 발생
-  console.error('❌ verifyOtp failed:', {
-    error: error?.message,
-    code: error?.code,
-    status: error?.status
-  })
-
-  return NextResponse.redirect(new URL('/auth/login?error=인증에 실패했습니다: ' + (error?.message || '알 수 없는 오류'), request.url))
+  // 인증 실패
+  console.error('❌ No authenticated user found')
+  return NextResponse.redirect(
+    new URL('/auth/login?error=이메일 인증에 실패했습니다', request.url)
+  )
 }
