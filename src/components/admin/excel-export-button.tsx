@@ -45,7 +45,6 @@ export function ExcelExportButton({ companies, guides }: ExcelExportButtonProps)
         '사업자번호': guide.business_number || '-',
         '가이드명': guide.name,
         '전화번호': guide.phone,
-        '이메일': guide.email,
         '자격증번호': guide.qualification_number || '-'
       }))
 
@@ -58,7 +57,6 @@ export function ExcelExportButton({ companies, guides }: ExcelExportButtonProps)
         { wch: 15 }, // 사업자번호
         { wch: 12 }, // 가이드명
         { wch: 15 }, // 전화번호
-        { wch: 30 }, // 이메일
         { wch: 15 }  // 자격증번호
       ]
 
@@ -69,7 +67,6 @@ export function ExcelExportButton({ companies, guides }: ExcelExportButtonProps)
         '번호': index + 1,
         '랜드사명': company.company_name || '-',
         '사업자번호': company.business_number || '-',
-        '이메일': company.email || '-',
         '가이드 수': company.guideCount + '명'
       }))
 
@@ -80,7 +77,6 @@ export function ExcelExportButton({ companies, guides }: ExcelExportButtonProps)
         { wch: 8 },  // 번호
         { wch: 25 }, // 랜드사명
         { wch: 15 }, // 사업자번호
-        { wch: 30 }, // 이메일
         { wch: 12 }  // 가이드 수
       ]
 

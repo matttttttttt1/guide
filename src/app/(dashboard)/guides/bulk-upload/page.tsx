@@ -18,7 +18,6 @@ type GuideRow = {
   영문명: string
   성별?: string
   생년월일?: string
-  이메일?: string
   메신저유형?: string
   메신저ID?: string
 }
@@ -48,7 +47,6 @@ export default function BulkUploadPage() {
         '영문명': '',
         '성별': '',
         '생년월일': '',
-        '이메일': '',
         '메신저유형': '',
         '메신저ID': ''
       },
@@ -60,7 +58,6 @@ export default function BulkUploadPage() {
         '영문명': '',
         '성별': '',
         '생년월일': '',
-        '이메일': '',
         '메신저유형': '',
         '메신저ID': ''
       },
@@ -72,7 +69,6 @@ export default function BulkUploadPage() {
         '영문명': 'GILDONG',
         '성별': 'male',
         '생년월일': '1990-01-01',
-        '이메일': 'hong@example.com',
         '메신저유형': 'kakao',
         '메신저ID': 'hong123'
       },
@@ -83,7 +79,6 @@ export default function BulkUploadPage() {
         '영문명': 'YOUNGHEE',
         '성별': 'female',
         '생년월일': '1992-05-15',
-        '이메일': 'kim@example.com',
         '메신저유형': 'line',
         '메신저ID': 'kim_line'
       }
@@ -101,7 +96,6 @@ export default function BulkUploadPage() {
       { wch: 12 }, // 영문명
       { wch: 10 }, // 성별
       { wch: 15 }, // 생년월일
-      { wch: 25 }, // 이메일
       { wch: 12 }, // 메신저유형
       { wch: 15 }  // 메신저ID
     ]
@@ -176,13 +170,6 @@ export default function BulkUploadPage() {
             }
           }
 
-          if (row['이메일']) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!emailRegex.test(row['이메일'])) {
-              validationErrors.push({ row: rowNumber, field: '이메일', message: '올바른 이메일 형식이 아닙니다' })
-            }
-          }
-
           if (row['메신저유형'] && !['kakao', 'line', 'whatsapp', 'telegram', 'wechat'].includes(row['메신저유형'])) {
             validationErrors.push({ row: rowNumber, field: '메신저유형', message: 'kakao, line, whatsapp, telegram, wechat 중 하나여야 합니다' })
           }
@@ -212,7 +199,7 @@ export default function BulkUploadPage() {
       name_en_first: row['영문명']?.toUpperCase() || '',
       gender: row['성별'] || null,
       birth_date: row['생년월일'] || null,
-      email: row['이메일'] || null,
+      email: null,
       messenger_type: row['메신저유형'] || null,
       messenger_id: row['메신저ID'] || null,
       photo_url: null
@@ -328,7 +315,6 @@ export default function BulkUploadPage() {
                         <th className="px-4 py-2 text-left">영문명</th>
                         <th className="px-4 py-2 text-left">성별</th>
                         <th className="px-4 py-2 text-left">생년월일</th>
-                        <th className="px-4 py-2 text-left">이메일</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -345,7 +331,6 @@ export default function BulkUploadPage() {
                             {row['성별'] === 'male' ? '남성' : row['성별'] === 'female' ? '여성' : '-'}
                           </td>
                           <td className="px-4 py-2">{row['생년월일'] || '-'}</td>
-                          <td className="px-4 py-2">{row['이메일'] || '-'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -379,7 +364,6 @@ export default function BulkUploadPage() {
               <ul className="list-disc list-inside ml-2 space-y-1">
                 <li>성별: male (남성) 또는 female (여성)</li>
                 <li>생년월일: <strong className="text-primary">YYYY-MM-DD 형식 필수</strong> (예: 1990-01-01)</li>
-                <li>이메일: 유효한 이메일 주소</li>
                 <li>메신저유형: kakao, line, whatsapp, telegram, wechat</li>
                 <li>메신저ID: 메신저 아이디</li>
               </ul>
