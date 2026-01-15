@@ -49,11 +49,6 @@ export async function signup(formData: FormData) {
     ? 'https://guide-management.vercel.app/auth/confirm'
     : 'http://localhost:3000/auth/confirm'
 
-  console.log('=== Signup Debug ===')
-  console.log('NODE_ENV:', process.env.NODE_ENV)
-  console.log('isProduction:', isProduction)
-  console.log('redirectUrl:', redirectUrl)
-
   const { error } = await supabase.auth.signUp({
     ...data,
     options: {

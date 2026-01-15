@@ -202,7 +202,14 @@ export default function SignupPage() {
               className="w-full"
               disabled={loading || emailExists === true || emailChecking}
             >
-              {loading ? '가입 중...' : '회원가입'}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  가입 중...
+                </>
+              ) : (
+                '회원가입'
+              )}
             </Button>
 
             <div className="text-center text-sm text-gray-600">
